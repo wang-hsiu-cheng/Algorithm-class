@@ -1,6 +1,6 @@
 *.pdf
 *.jpg
 *.png
-/.vscode
+*/.vscode
 *.exe
 *.dat

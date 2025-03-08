@@ -11,6 +11,8 @@ RUN apt update && apt install -y \
     gcc \
     # gcc-c++ \
     make \
+    python \
+    python3 \
     # vim \
     # git \
     wget \

@@ -3,7 +3,7 @@ import openpyxl
 import matplotlib.pyplot as plt
 
 myWorkbook = openpyxl.load_workbook('result.xlsx')
-result_data = myWorkbook['hw02']
+result_data = myWorkbook['hw02-1']
 
 data_rows = result_data.max_row
 data_columns = result_data.max_column
@@ -25,8 +25,8 @@ plt.plot(data_numbers, algorithm_time[0], color="gray", label=algorithm_name[0],
 plt.plot(data_numbers, algorithm_time[1], color="orange", label=algorithm_name[1], linewidth=3)
 plt.plot(data_numbers, algorithm_time[2], color="blue", label=algorithm_name[2], linewidth=3)
 # plt.plot(data_numbers, algorithm_time[3], color="pink", label=algorithm_name[3], linewidth=3)
-plt.title('Search Algorithm Avg Time (log-log scale)')
-# plt.title('Search Algorithm Worst Case Time (log-log scale)')
+# plt.title('Search Algorithm Avg Time (log-log scale)')
+plt.title('Search Algorithm Worst Case Time (log-log scale)')
 plt.xlabel('Number of data')
 plt.ylabel('Time (sec)')
 plt.yscale('log')

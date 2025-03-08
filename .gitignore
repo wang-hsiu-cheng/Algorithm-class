@@ -1,8 +1,9 @@
 *.pdf
+*.docx
+*.xlsx
+*.txt
 *.jpg
 *.png
 */.vscode
 *.exe
 *.dat
-*.xlsx
-*.txt

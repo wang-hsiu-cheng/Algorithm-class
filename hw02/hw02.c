@@ -72,59 +72,58 @@ int main(void) {
     int i, j;                                // loop index
     double t;                                // time counter
     int worstCase, worstCaseBD, worstCaseRD; // worstcase index for each search
-    int searchResult;
 
     srand(time(NULL));                           // setup the random seed
 
     readInput();                                 // read input to data array
     printf("n: %d\n", N);                        // print out input size
     worstCase = N - 1;                           // assign the worst case index
-    worstCaseBD = (N - 1) / 2;                     // assign the worst case index
-    worstCaseRD = (N - 1) / 2;                     // assign the worst case index
+    worstCaseBD = (N - 1) / 2;                   // assign the worst case index
+    worstCaseRD = 0;                             // assign the worst case index
     t = GetTime();                               // initialize time counter
     for (i = 0; i < RAverage; i++) {
         for (j = 0; j < N; j++) {
-            searchResult = Search(data[j], data, N);
+            Search(data[j], data, N);
         }
     }
     t = (GetTime() - t) / (RAverage * N);   // calculate CPU time per iteration
     printf("Linear search average CPU time: %g\n", t);    // print out CPU time
 
-    t = GetTime(); // initialize time counter
+    t = GetTime();                          // initialize time counter
     for (i = 0; i < RAverage; i++) {
         for (j = 0; j < N; j++) {
-            searchResult = BDSearch(data[j], data, N);
+            BDSearch(data[j], data, N);
         }
     }
-    t = (GetTime() - t) / (RAverage * N);         // calculate CPU time per iteration
+    t = (GetTime() - t) / (RAverage * N);   // calculate CPU time per iteration
     printf("Bidirection search average CPU time: %g\n", t);   // print CPU time
 
     t = GetTime(); // initialize time counter
     for (i = 0; i < RAverage; i++) {
         for (j = 0; j < N; j++) {
-            searchResult = RDSearch(data[j], data, N);
+            RDSearch(data[j], data, N);
         }
     }
-    t = (GetTime() - t) / (RAverage * N);         // calculate CPU time per iteration
+    t = (GetTime() - t) / (RAverage * N);   // calculate CPU time per iteration
     printf("Random-direction search average CPU time: %g\n", t);
 
     t = GetTime();                          // initialize time counter
     for (i = 0; i < RWorstCase; i++) {
-        searchResult = Search(data[worstCase], data, N);
+        Search(data[worstCase], data, N);
     }
     t = (GetTime() - t) / RWorstCase;       // calculate CPU time per iteration
     printf("Linear search worst-case CPU time: %g\n", t); // print out CPU time
 
     t = GetTime();                          // initialize time counter
     for (i = 0; i < RWorstCase; i++) {
-        searchResult = BDSearch(data[worstCaseBD], data, N);
+        BDSearch(data[worstCaseBD], data, N);
     }
     t = (GetTime() - t) / RWorstCase;       // calculate CPU time per iteration
     printf("Bidirection search worst-case CPU time: %g\n", t);
 
     t = GetTime();                          // initialize time counter
     for (i = 0; i < RWorstCase; i++) {
-        searchResult = RDSearch(data[worstCaseRD], data, N);
+        RDSearch(data[worstCaseRD], data, N);
     }
     t = (GetTime() - t) / RWorstCase;       // calculate CPU time per iteration
     printf("Random-direction search worst-case CPU time: %g\n", t);

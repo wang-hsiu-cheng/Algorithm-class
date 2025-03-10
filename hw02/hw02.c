@@ -1,6 +1,7 @@
 // EE3410 HW02 Random Data Searches
 // 111061237, 王修呈
 // 2025/03/10
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

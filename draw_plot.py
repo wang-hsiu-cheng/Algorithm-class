@@ -3,7 +3,7 @@ import openpyxl
 import matplotlib.pyplot as plt
 
 myWorkbook = openpyxl.load_workbook('result.xlsx')
-result_data = myWorkbook['hw03']
+result_data = myWorkbook['hw04']
 
 data_rows = result_data.max_row
 data_columns = result_data.max_column
@@ -30,15 +30,15 @@ for i in range(2, data_rows+1):
 # set graph style
 plt.figure(figsize=(8,6))
 # plt.plot(t, reference, color="C8", label="O(n)", linewidth=3)
-plt.plot(data_numbers, algorithm_time[0], color="gray", label=algorithm_name[0], linewidth=3)
-plt.plot(data_numbers, algorithm_time[1], color="orange", label=algorithm_name[1], linewidth=3)
-plt.plot(data_numbers, algorithm_time[2], color="blue", label=algorithm_name[2], linewidth=3)
-plt.plot(data_numbers, algorithm_time[3], color="pink", label=algorithm_name[3], linewidth=3)
-plt.plot(data_numbers, algorithm_time[4], color="C0", label=algorithm_name[4], linestyle="--", linewidth=3)
-plt.plot(data_numbers, algorithm_time[5], color="C1", label=algorithm_name[5], linestyle="-.", linewidth=3)
-plt.plot(data_numbers, algorithm_time[6], color="C2", label=algorithm_name[6], linestyle="--", linewidth=3)
-plt.plot(data_numbers, algorithm_time[7], color="C3", label=algorithm_name[7], linestyle=":", linewidth=3)
-plt.title('Sort Algorithms Avg Time (log-log scale)', fontsize=14)
+plt.plot(data_numbers, algorithm_time[0], color="gray", label=algorithm_name[0], linestyle="--", linewidth=3)
+plt.plot(data_numbers, algorithm_time[1], color="orange", label=algorithm_name[1], linestyle="-", linewidth=3)
+plt.plot(data_numbers, algorithm_time[2], color="blue", label=algorithm_name[2], linestyle="--", linewidth=3)
+plt.plot(data_numbers, algorithm_time[3], color="pink", label=algorithm_name[3], linestyle="-", linewidth=3)
+# plt.plot(data_numbers, algorithm_time[4], color="C0", label=algorithm_name[4], linestyle="--", linewidth=3)
+# plt.plot(data_numbers, algorithm_time[5], color="C1", label=algorithm_name[5], linestyle="-.", linewidth=3)
+# plt.plot(data_numbers, algorithm_time[6], color="C2", label=algorithm_name[6], linestyle="--", linewidth=3)
+# plt.plot(data_numbers, algorithm_time[7], color="C3", label=algorithm_name[7], linestyle=":", linewidth=3)
+plt.title('Network Connectivity Prob Avg Time (log-log scale)', fontsize=14)
 # plt.title('Search Algorithm Worst Case Time (log-log scale)')
 plt.xlabel('Number of data', fontsize=14)
 plt.ylabel('Time (sec)', fontsize=14)
@@ -46,5 +46,5 @@ plt.tick_params(axis='both', labelsize=14)  # 'both' applies to x and y axes
 plt.yscale('log')
 plt.xscale('log')
 plt.grid(True)
-plt.legend(fontsize=12)
+plt.legend(fontsize=14)
 plt.show()

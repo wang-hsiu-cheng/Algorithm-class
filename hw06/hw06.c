@@ -11,7 +11,8 @@
 int N;                                       // input size
 char **data;                                 // input data
 char **A;                                    // array to be sorted
-int R = 1;                                 // repeat time for average 
+char **temp;
+int R = 500;                                 // repeat time for average 
 void readInput(void);                        // read all inputs
 void printArray(char **A);                   // print the content of array A
 void copyArray(char **data, char **A);       // copy data to array A
@@ -44,6 +45,10 @@ void readInput(void)
     data[N] = (char*)malloc(10 * sizeof(char));
     A[N] = (char *)malloc(10 * sizeof(char)); 
     data[N] = "zzzzzzzz";
+
+    temp = (char **)malloc(N * sizeof(char *));      // allocate memory for A
+    for (i = 0; i < N; i++)
+        temp[i] = (char*)malloc(10 * sizeof(char));//allocate memory for string
 }
 
 void printArray(char **list)
@@ -138,14 +143,11 @@ void MergeSort(char **list, int low, int high)
 void Merge(char **list, int low, int mid, int high)
 {
     int h, i, j, k, l;
-    char **temp;
 
     h = low;
     i = low;
     j = mid + 1; //Initializeloopingindices.
-    temp = (char **)malloc(N * sizeof(char *));      // allocate memory for A
-    for (l = 0; l < N; l++)
-        temp[l] = (char*)malloc(10 * sizeof(char));//allocate memory for string
+
     while ((h <= mid) && (j <= high)) { //Store smaller one to B[i].
         if (strcmp(list[h], list[j]) <= 0) { //list[h] issmaller.
             temp[i] = list[h];
@@ -208,8 +210,6 @@ void QuickSort(char **list, int low, int high)
 
     if (low < high) {
         mid = Partition(list, low, high + 1);
-        // printf("low: %d, high: %d, mid: %d\n", low, high, mid);
-        // printArray(list);
         QuickSort(list, low, mid - 1);
         QuickSort(list, mid + 1, high);
     }
@@ -277,44 +277,41 @@ int main(void)
     readInput();                            // read input to data array
     printf("N = %d\n", N);                  // print out input size
 
-    // t0 = GetTime();                              // initialize time counter
-    // for (i = 0; i < R; i++)
-    // {
-    //     copyArray(data, A);
-    //     BUHeapSort(A, N);
-    // }
-    // printArray(A);
-    // t1 = GetTime();
-    // for (i = 0; i < R; i++)
-    // {
-    //     copyArray(data, A);    
-    //     MergeSort(A, 0, N - 1);
-    // }
-    // t2 = GetTime();
-    // for (i = 0; i < R; i++)
-    // {
-    //     copyArray(data, A);    
-    //     MergeSort1(A, 0, N - 1);
-    // }
-    // printArray(A);
-    // t3 = GetTime();
-    // for (i = 0; i < R; i++)
-    // {
-    //     copyArray(data, A); 
-    //     QuickSort(A, 0, N - 1);
-    // }
-    // printArray(A);
-    // t4 = GetTime();
-    // for (i = 0; i < R; i++)
-    // {
-    //     copyArray(data, A);    
-    //     QuickSort1(A, 0, N - 1);
-    // }
+    t0 = GetTime();                              // initialize time counter
+    for (i = 0; i < R; i++)
+    {
+        copyArray(data, A);
+        BUHeapSort(A, N);
+    }
+    t1 = GetTime();
+    for (i = 0; i < R; i++)
+    {
+        copyArray(data, A);    
+        MergeSort(A, 0, N - 1);
+    }
+    t2 = GetTime();
+    for (i = 0; i < R; i++)
+    {
+        copyArray(data, A);    
+        MergeSort1(A, 0, N - 1);
+    }
+    t3 = GetTime();
+    for (i = 0; i < R; i++)
+    {
+        copyArray(data, A); 
+        QuickSort(A, 0, N - 1);
+    }
+    t4 = GetTime();
+    for (i = 0; i < R; i++)
+    {
+        copyArray(data, A);    
+        QuickSort1(A, 0, N - 1);
+    }
     t5 = GetTime();
     for (i = 0; i < R; i++)
     {
         copyArray(data, A);    
-        RQuickSort(A, 0, N-1);
+        RQuickSort(A, 0, N - 1);
     }
     t6 = GetTime();
     printf("HeapSort CPU time: %g s\n", (t1 - t0) / R);
@@ -324,6 +321,6 @@ int main(void)
     printf("QuickSort1 CPU time: %g s\n", (t5 - t4) / R);
     printf("RQuickSort CPU time: %g s\n", (t6 - t5) / R);
 
-    printArray(A);                          // print sorted results
+    // printArray(A);                          // print sorted results
     return 0;
 }

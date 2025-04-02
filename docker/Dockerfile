@@ -9,7 +9,7 @@ RUN apt update && apt install -y \
     build-essential cmake automake autoconf \
     sudo \
     gcc \
-    # gcc-c++ \
+    g++ \
     make \
     python \
     python3 \

@@ -236,7 +236,7 @@ int Partition(char **list, int low, int high)
     list[low] = list[j];
     list[j] = v; // Move v to the right position.
     return j;
- }
+}
 
 void QuickSort1(char **list, int low, int high)
 {

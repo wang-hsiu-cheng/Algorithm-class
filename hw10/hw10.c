@@ -54,26 +54,29 @@ int MCoinGreedy(int D, int NCoin, int Coins[])
 int NCoinDP_R(int D, int Ncoin, int Coins[])
 {
     int x_i;
-    int temp;
+    int temp, result;
+    int min_ = 100;
 
     if (Ncoin == 1)
         return D;
     for (x_i = 0; x_i <= D / Coins[Ncoin - 1]; x_i++) {
         if (D - x_i * Coins[Ncoin - 1]) {
             temp = NCoinDP_R(D - x_i * Coins[Ncoin - 1], Ncoin - 1, Coins) + x_i;
-            min = 100;
         } else {
             temp = x_i;
         }
-        min = (temp < min) ? temp : min;
+        min_ = (temp < min_) ? temp : min_;
     }
-    return min;
+    result = min_;
+    return result;
 }
 
 int NCoinDP_TD(int D, int Ncoin, int Coins[])
 {
     int x_i;
     int temp;
+    int result;
+    int min_ = 100;
 
     if (G[Ncoin - 1][D - 1])
         return G[Ncoin - 1][D - 1];
@@ -82,14 +85,14 @@ int NCoinDP_TD(int D, int Ncoin, int Coins[])
     for (x_i = 0; x_i <= D / Coins[Ncoin - 1]; x_i++) {
         if (D - x_i * Coins[Ncoin - 1]) {
             temp = NCoinDP_R(D - x_i * Coins[Ncoin - 1], Ncoin - 1, Coins) + x_i;
-            min = 100;
         } else {
             temp = x_i;
         }
-        min = (temp < min) ? temp : min;
+        min_ = (temp < min_) ? temp : min_;
     }
-    G[Ncoin - 1][D - 1] = min;
-    return min;
+    G[Ncoin - 1][D - 1] = min_;
+    result = min_;
+    return result;
 } 
 
 void NCoinDP_BU(int D, int Ncoin, int Coins[])
@@ -171,7 +174,8 @@ void Replace(int C)
 {
     int i, j, begin, end;
     double temp;
-
+    double test;
+    
     begin = Coins[C - 2] + 1;
     end = (C == 4) ? Coins[C - 1] : Coins[C] - 1;
     printf("Replacing $%d:\n", Coins[C - 1]);

@@ -1,90 +1,107 @@
-#include <sys/types.h>
-#include <sys/socket.h>
+#include <iostream>
+#include <cstring>
+#include <cstdio>
+#include <cstdlib>
 #include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <iostream>
 #include <netdb.h>
-#include <cstdio>
 
 int main() {
-    struct sockaddr_in myaddr; // Struct to hold the server address
-    struct sockaddr_in addr;   // Struct to hold the client address
-    int sock, stream, port, s;
-    socklen_t addr_size;
-    char b[100], n[20], m[100];
+    struct sockaddr_in serverAddr, clientAddr;
+    int serverSocket, clientSocket, bytesRead;
+    socklen_t clientAddrLen;
+    char recvBuffer[100], studentID[20], email[100];
 
-    // Initialize the server address struct to zero
-    memset(&myaddr, 0, sizeof(myaddr));
-    myaddr.sin_family = PF_INET; // Set the address family to IPv4
-    myaddr.sin_port = htons(1234); // Set the port number, converting to network byte order
-    myaddr.sin_addr.s_addr = htonl(INADDR_ANY); // Bind to any available network interface
+    // Clear and initialize server address
+    memset(&serverAddr, 0, sizeof(serverAddr));
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(1234);
+    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    // Create a socket
-    sock = socket(PF_INET, SOCK_STREAM, 0);
-    // Bind the socket to the address and port number
-    bind(sock, (struct sockaddr*) &myaddr, sizeof(struct sockaddr_in));
-    // Listen for incoming connections, with a backlog of 10
-    listen(sock, 10);
-    addr_size = sizeof(addr);
+    // Create server socket
+    serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverSocket < 0) {
+        perror("Socket creation failed");
+        return 1;
+    }
 
-    printf("Waiting for requirement... \n");
+    // Bind socket to local address
+    if (bind(serverSocket, (struct sockaddr*) &serverAddr, sizeof(serverAddr)) < 0) {
+        perror("Bind failed");
+        return 1;
+    }
 
-    while (1) {
-        // Accept an incoming connection
-        stream = accept(sock, (struct sockaddr*) &addr, &addr_size);
+    // Listen with a backlog of 10 connections
+    listen(serverSocket, 10);
+    clientAddrLen = sizeof(clientAddr);
 
-        // Send initial message to the client
-        s = write(stream, "What's your requirement? 1.DNS 2.QUERY 3.QUIT : ", strlen("What's your requirement? 1.DNS 2.QUERY 3.QUIT : ") + 1);
+    std::cout << "Waiting for requirement...\n";
 
-        // Read the client's requirement
-        s = read(stream, b, 100);
-        printf("Client's requirement: %s\n", b);
+    while (true) {
+        // Accept an incoming client connection
+        clientSocket = accept(serverSocket, (struct sockaddr*) &clientAddr, &clientAddrLen);
 
-        // If the client chose "DNS"
-        if (strcmp(b, "DNS") == 0) {
-            s = write(stream, "Input URL address: ", strlen("Input URL address: ") + 1); // Prompt the client for URL
-            s = read(stream, b, 100); // Read the URL from the client
-            struct hostent *host = gethostbyname(b); // Perform a DNS lookup
-            if (host != NULL) {
-                strcpy(b, inet_ntoa(*(struct in_addr*)host->h_addr_list[0])); // Convert the address to a string
-                s = write(stream, b, sizeof(b) + 1); // Send the IP address back to the client
+        // Send requirement prompt to client
+        const char* promptMsg = "What's your requirement? 1.DNS 2.QUERY 3.QUIT : ";
+        write(clientSocket, promptMsg, strlen(promptMsg) + 1);
+
+        // Read client input
+        bytesRead = read(clientSocket, recvBuffer, sizeof(recvBuffer));
+        std::cout << "Client's requirement: " << recvBuffer << std::endl;
+
+        // Handle DNS lookup
+        if (strcmp(recvBuffer, "DNS") == 0) {
+            const char* askUrlMsg = "Input URL address: ";
+            write(clientSocket, askUrlMsg, strlen(askUrlMsg) + 1);
+
+            read(clientSocket, recvBuffer, sizeof(recvBuffer));
+            struct hostent* host = gethostbyname(recvBuffer);
+            if (host != nullptr) {
+                strcpy(recvBuffer, inet_ntoa(*(struct in_addr*)host->h_addr_list[0]));
+                write(clientSocket, recvBuffer, sizeof(recvBuffer));
             } else {
-                s = write(stream, "No such DNS", strlen("No such DNS") + 1); // Send an error message if the DNS lookup fails
+                write(clientSocket, "URL Not Found", strlen("URL Not Found") + 1);
             }
         }
-        // If the client chose "QUERY"
-        else if (strcmp(b, "QUERY") == 0) {
-            int flag = 0;
-            FILE *fp = fopen("query.txt", "r"); // Open the query file
-            s = write(stream, "Input student ID: ", strlen("Input student ID: ") + 1); // Prompt the client for student ID
-            s = read(stream, b, 100); // Read the student ID from the client
-            while (fscanf(fp, "%s %s", n, m) != EOF) { // Read each entry from the file
-                if (strcmp(b, n) == 0) { // If the ID matches
-                    flag = 1;
-                    s = write(stream, m, sizeof(m) + 1); // Send the corresponding value to the client
+
+        // Handle QUERY from file
+        else if (strcmp(recvBuffer, "QUERY") == 0) {
+            bool found = false;
+            FILE* queryFile = fopen("query.txt", "r");
+
+            const char* askIDMsg = "Input student ID: ";
+            write(clientSocket, askIDMsg, strlen(askIDMsg) + 1);
+
+            read(clientSocket, recvBuffer, sizeof(recvBuffer));
+            while (fscanf(queryFile, "%s %s", studentID, email) != EOF) {
+                if (strcmp(recvBuffer, studentID) == 0) {
+                    write(clientSocket, email, sizeof(email));
+                    found = true;
                     break;
                 }
             }
-            if (flag == 0) {
-                s = write(stream, "NO such student ID", strlen("NO such student ID") + 1); // Send an error message if the ID is not found
-            }
-            fclose(fp); // Close the file
-        }
-        // If the client chose "QUIT"
-        else if (strcmp(b, "QUIT") == 0) {
-			s = write(stream, "...Disconneted", strlen("...Disconneted") + 1);
-            printf("Waiting for requirement... \n"); // Print a message indicating the server is ready for new connections
-        }
-		else if (strcmp(b, "client error") == 0) {
-			s = write(stream, "Invalid Command", strlen("Invalid Command") + 1); // Send an error message if the input command is invalid
-		}
+            fclose(queryFile);
 
-        // Close the connection to the client
-        close(stream);
+            if (!found) {
+                write(clientSocket, "ID Not Found", strlen("ID Not Found") + 1);
+            }
+        }
+
+        // Handle QUIT
+        else if (strcmp(recvBuffer, "QUIT") == 0) {
+            const char* goodbyeMsg = "...Disconnected";
+            write(clientSocket, goodbyeMsg, strlen(goodbyeMsg) + 1);
+            std::cout << "Waiting for requirement...\n";
+        }
+
+        // Handle unknown input
+        else if (strcmp(recvBuffer, "client error") == 0) {
+            write(clientSocket, "Invalid Command", strlen("Invalid Command") + 1);
+        }
+
+        // Close connection to client
+        close(clientSocket);
     }
 
     return 0;

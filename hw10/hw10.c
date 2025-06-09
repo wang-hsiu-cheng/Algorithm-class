@@ -11,15 +11,17 @@
 int NCoin = 4;
 int Coins[] = {1, 5, 10, 50};
 int **G;
-int E[4][99] = {0};
 int D = 99;
-int min = 100;
 double avg_greedy = 0;
 double avg_recursive = 0;
 double avg_top = 0;
 double avg_bottom = 0;
 double t1, t2, t3, t4;
 double GetTime(void);
+void ResetArray(int **A, int a, int b);
+void Origin(void);
+void Replace(int C);
+void ReplaceTwo(void);
 int MCoinGreedy(int D, int NCoin, int COINs[]); 
 int NCoinDP_R(int D, int Ncoin, int Coins[]);   // DP recursive approach
 int NCoinDP_TD(int D, int Ncoin, int Coins[]);  // DP top-down approach
@@ -74,8 +76,7 @@ int NCoinDP_R(int D, int Ncoin, int Coins[])
 int NCoinDP_TD(int D, int Ncoin, int Coins[])
 {
     int x_i;
-    int temp;
-    int result;
+    int temp, result;
     int min_ = 100;
 
     if (G[Ncoin - 1][D - 1])
@@ -84,7 +85,7 @@ int NCoinDP_TD(int D, int Ncoin, int Coins[])
         return D;
     for (x_i = 0; x_i <= D / Coins[Ncoin - 1]; x_i++) {
         if (D - x_i * Coins[Ncoin - 1]) {
-            temp = NCoinDP_R(D - x_i * Coins[Ncoin - 1], Ncoin - 1, Coins) + x_i;
+            temp = NCoinDP_TD(D - x_i * Coins[Ncoin - 1], Ncoin - 1, Coins) + x_i;
         } else {
             temp = x_i;
         }
@@ -312,7 +313,6 @@ int main(void)
     printf("  DP recursive: {1, 5, 10, 50} average is %g, CPU time: %g sec\n", avg_recursive, t2);
     printf("  DP top-down: {1, 5, 10, 50} average is %g, CPU time: %g sec\n", avg_top, t3);
     printf("  DP bottom-up: {1, 5, 10, 50} average is %g, CPU time: %g sec\n", avg_bottom, t4);
-
     Replace(4);
     printf("  Greedy method: {1, 5, 10, C4} average is %g, CPU time: %g sec\n", avg_greedy, t1);
     printf("  DP recursive: {1, 5, 10, C4} average is %g, CPU time: %g sec\n", avg_recursive, t2);

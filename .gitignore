@@ -8,3 +8,6 @@
 /.vscode
 *.exe
 *.dat
+*.M
+*.smt
+*.log
